@@ -6,6 +6,7 @@ import Gallery from "./gallery";
 
 export default function Home() {
   const [users, setUsers] = useState(null);
+  const [isFetching, setFetching] = useState(true);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -18,17 +19,22 @@ export default function Home() {
         setUsers(data);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setFetching(false);
       }
     };
-
     fetchUsers();
   }, []);
 
   return (
     <main className={styles.main}>
-      <Suspense fallback={<p>Fetching Users...</p>}>
-        {!users ? <p>No users data</p> : <Gallery users={users} />}
-      </Suspense>
+      {isFetching ? (
+        <p>Fetching User Data ...</p>
+      ) : !users ? (
+        <p>No users data</p>
+      ) : (
+        <Gallery users={users} />
+      )}
     </main>
   );
 }
